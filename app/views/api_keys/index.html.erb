@@ -1,0 +1,18 @@
+<p style="color: green"><%= notice %></p>
+
+<h1>Api keys</h1>
+
+<div id="api_keys">
+  <% @api_keys.each do |api_key| %>
+  <%if current_user.id == api_key.user_id%>
+    <%= render api_key %>
+    <p>
+      <%= link_to "Show this api key", api_key %>
+    </p>
+  <% end %>
+  <%end%>
+</div>
+<div><%= @subscription_type%></div>
+<%= button_to "Create a new Key", api_keys_path, method: :post %>
+<br/>
+<%= button_to "Log Out", destroy_user_session_path, method: :delete %>

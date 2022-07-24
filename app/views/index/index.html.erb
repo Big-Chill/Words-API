@@ -1,0 +1,14 @@
+<h1>Welcome to Homepage</h1>
+<% if user_signed_in?%>
+<%= link_to "Show my API Keys",api_keys_path%>
+<br>
+<%= button_to "Log Out", destroy_user_session_path, method: :delete %>
+<br/>
+<%= button_to "Create a new Key", api_keys_path, method: :post %>
+<br/>
+<%= current_user.inspect%>
+<%else%>
+<%= link_to "Sign In", new_user_session_path%>
+<br/>
+<%= link_to "Sign Up", new_user_registration_path%>
+<%end%>
