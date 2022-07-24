@@ -8,6 +8,7 @@ class ApiKeysController < ApplicationController
   end
 
   def show
+    @frequency = ApiKey.find_by(api_key:@api_key.api_key).frequency
   end
 
   def edit

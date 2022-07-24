@@ -5,7 +5,7 @@ class ApiKey < ApplicationRecord
   before_create :init_api_key
 
   def init_api_key
-    self.api_key = SecureRandom.alphanumeric(150)
+    self.api_key = SecureRandom.alphanumeric(75)
     self.frequency = 0
   end
 
