@@ -1,44 +1,51 @@
 class WordController < ApplicationController
-  before_action :is_valid_word?, except: [:getWord]
-  before_action :is_valid_api?
-  before_action :check_daily_limit
+  before_action :fetch_word, except: [ :getWord, :getAllWords ]
+  before_action :fetch_api_key, except: [ :getAllWords ]
+  before_action :check_daily_limit, except: [ :getAllWords ]
+
+  def getAllWords
+    render json: { Words: Word.pluck(:word_name) }
+  end
 
   def getWord
-    render json: {"word": Word.all[Random.new.rand(Word.all.length)].word_name}, status: :ok
+    render json: { Word: Word.offset(rand(Word.count)).first.word_name }, status: :ok
   end
 
   def getDefinitions
-    render json: {"Word": params[:word], "Definitions":Definition.fetch_definition(Word.find_by(word_name:params[:word]))}
+    render json: { Word: @word.word_name, Definitions: @word.definitions.pluck(:text) }, status: :ok
   end
 
   def getExamples
-    render json: {"Word": params[:word], "Examples":Example.fetch_example(Word.find_by(word_name:params[:word]))}
+    render json: { Word: @word.word_name, Examples: @word.examples.pluck(:text) }, status: :ok
   end
 
   def getSynonyms
-    render json: {"Word": params[:word], "Synonyms":Synonym.fetch_synonym(Word.find_by(word_name:params[:word]))}
+    render json: { Word: @word.word_name, Synonyms: @word.synonyms.pluck(:text) }, status: :ok
   end
 
   def getAntonyms
-    render json: {"Word": params[:word], "Antonyms":Antonym.fetch_antonym(Word.find_by(word_name:params[:word]))}
+    render json: { Word: @word.word_name, Antonyms: @word.antonyms.pluck(:text) }, status: :ok
   end
 
   private
-  def is_valid_word?
-    if (Word.is_valid_word?(params[:word]) == nil)
-      return render json: {"message":"Invalid Word"}
-    end
+  def fetch_word
+    @word = Word.find_by( word_name: params[:word] )
+    return render json: { message: "Invalid Word" } if @word == nil
   end
 
-  def is_valid_api?
-    if (ApiKey.validate_api_key(params[:api_key]) == nil)
-      return render json: {"message":"Invalid API Key"}
-    end
+  def fetch_api_key
+    @api_key = ApiKey.find_by( api_key: params[:api_key] )
+    return render json: { message: "Invalid API Key" } if @api_key == nil
   end
 
   def check_daily_limit
-    if (ApiKey.check_daily_limit(params[:api_key]) == "Daily Quota Exceeded")
-      render json:{"message":"Daily Quota Exceeded"}
+    if @api_key.daily_limit_reached?
+      return render json: { message: "Daily Limit reached" }
+    end
+    if Time.now - 1.day >= @api_key.created_at
+      @api_key.reset_frequency
+    else
+      @api_key.increment_usage!
     end
   end
 end

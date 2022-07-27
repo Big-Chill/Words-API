@@ -23,6 +23,10 @@ gem "turbo-rails"
 
 gem 'devise'
 
+gem 'byebug'
+
+gem 'rack-cors'
+
 gem 'securerandom'
 
 gem 'bootstrap'
