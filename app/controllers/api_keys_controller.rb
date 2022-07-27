@@ -13,8 +13,8 @@ class ApiKeysController < ApplicationController
   end
 
   def create
-    if current_user.keys_limit_reached? == true
-      return redirect_to api_keys_path, notice: " You can only create #{current_user.keys_limit} api keys."
+    if current_user.keys_limit_reached?
+      return redirect_to api_keys_path, notice: " You can only create #{current_user.keys_limit} api keys. "
     end
     current_user.api_keys.create( subscription_type: current_user.subscription_type )
     redirect_to api_keys_path
