@@ -13,9 +13,9 @@ class ApiKey < ApplicationRecord
   end
 
   def reset_frequency
-    frequency = 0
-    created_at = Time.now
-    save
+    self.frequency = 1
+    self.created_at = Time.now
+    self.save
   end
 
   def daily_limit_reached?
@@ -23,7 +23,11 @@ class ApiKey < ApplicationRecord
   end
 
   def increment_usage!
-    self.frequency += 1
-    save
+    if Time.now - 60.seconds >= self.created_at
+      reset_frequency
+    else
+      self.frequency += 1
+      self.save
+    end
   end
 end

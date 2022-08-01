@@ -44,6 +44,6 @@ class ApiKeysController < ApplicationController
     end
 
     def api_key_params
-      params.require( :api_key ).permit( :api_key, :frequency )
+      params.require(:api_key).permit(:api_key,:frequency)
     end
 end

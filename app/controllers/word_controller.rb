@@ -42,10 +42,6 @@ class WordController < ApplicationController
     if @api_key.daily_limit_reached?
       return render json: { error: "Daily Limit of #{@api_key.usage_limit} reached" }
     end
-    if Time.now - 1.day >= @api_key.created_at
-      @api_key.reset_frequency
-    else
-      @api_key.increment_usage!
-    end
+    @api_key.increment_usage!
   end
 end
