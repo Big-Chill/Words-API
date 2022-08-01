@@ -6,11 +6,9 @@ class ApiKeysController < ApplicationController
     @api_keys = ApiKey.all
   end
 
-  def show
-  end
+  def show; end
 
-  def edit
-  end
+  def edit; end
 
   def create
     if current_user.keys_limit_reached?
