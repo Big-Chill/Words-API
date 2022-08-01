@@ -23,7 +23,7 @@ class ApiKey < ApplicationRecord
   end
 
   def increment_usage!
-    if Time.now - 60.seconds >= self.created_at
+    if Time.now - 1.day >= self.created_at
       reset_frequency
     else
       self.frequency += 1
